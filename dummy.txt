@@ -1,0 +1,38 @@
+public class TestIndeks {
+    public static void main(String[] args) {
+
+        int future_fk_counter;
+        long kontr_kod = 0;
+        int indeks_into_75;
+
+        for (int fk_counter = 0; fk_counter<100; fk_counter++){
+
+            // Формирование кода контроля
+            future_fk_counter = fk_counter+1;	// Код контроля расчитывается на 1 такт вперёд, чтобы в текущем такте
+            // проверялось значение с предыдущего
+
+            if ((future_fk_counter-1)%1125 == 0){				// смена четверти
+                kontr_kod&=0xC000;
+                kontr_kod+=0x4000;
+            }
+
+            else if (((future_fk_counter-1)%75 == 0)){	// смена УФИ
+                kontr_kod &= 0xFC00;
+                kontr_kod += 0x400;
+            }
+            else if (((future_fk_counter%75 >70)||(future_fk_counter%75 == 0)))	// КлОбн и КИП
+                kontr_kod += 0x40;
+            else {
+                indeks_into_75 = future_fk_counter % 75;
+                if (indeks_into_75 == 36){
+                    kontr_kod += 0x240;		// смена первой линейки фазовращателей на вторую внутри одного УФИ
+                }
+            }
+
+            System.out.println("i = " + (fk_counter+1) + ", kod = " + Long.toBinaryString(kontr_kod));
+
+            kontr_kod++;	// в последнюю очередь
+        }
+
+    }
+}
